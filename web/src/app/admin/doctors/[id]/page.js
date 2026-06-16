@@ -54,7 +54,12 @@ export default function AdminDoctorProfilePage() {
             <h1 className="text-2xl font-bold">{doctor.name}</h1>
             <p className="text-gray-500">{doctor.speciality}</p>
           </div>
-          <Badge status={doctor.isVerified ? 'verified' : 'pending'} />
+          <div className="flex items-center gap-2">
+            <Badge status={doctor.isVerified ? 'verified' : 'pending'} />
+            <Link href={`/admin/doctors/${params.id}/edit`} className="btn-secondary text-sm px-3 py-1.5 rounded-lg">
+              Edit
+            </Link>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mt-6">

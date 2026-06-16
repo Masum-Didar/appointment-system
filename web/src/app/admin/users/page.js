@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Card from '@/components/ui/Card';
 import Spinner from '@/components/ui/Spinner';
 import Badge from '@/components/ui/Badge';
+import Link from 'next/link';
 import { isAuthenticated, getStoredUser } from '@/lib/auth';
 
 export default function AdminUsersPage() {
@@ -75,12 +76,15 @@ export default function AdminUsersPage() {
                   <Badge status={u.isActive ? 'active' : 'inactive'} />
                 </td>
                 <td className="py-3">
-                  <button
-                    onClick={() => toggleStatus(u.id, !u.isActive)}
-                    className="text-primary-600 hover:underline text-sm"
-                  >
-                    {u.isActive ? 'Deactivate' : 'Activate'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Link href={`/admin/users/${u.id}/edit`} className="text-primary-600 hover:underline text-sm">Edit</Link>
+                    <button
+                      onClick={() => toggleStatus(u.id, !u.isActive)}
+                      className="text-primary-600 hover:underline text-sm"
+                    >
+                      {u.isActive ? 'Deactivate' : 'Activate'}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -54,7 +54,12 @@ export default function AdminAssistantProfilePage() {
             <h1 className="text-2xl font-bold">{assistant.profile?.name || assistant.phone}</h1>
             <p className="text-gray-500">Assistant</p>
           </div>
-          <Badge status={assistant.isActive ? 'active' : 'inactive'} />
+          <div className="flex items-center gap-2">
+            <Badge status={assistant.isActive ? 'active' : 'inactive'} />
+            <Link href={`/admin/assistants/${params.id}/edit`} className="btn-secondary text-sm px-3 py-1.5 rounded-lg">
+              Edit
+            </Link>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 mt-6">

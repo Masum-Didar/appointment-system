@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/ui/Spinner';
 import Badge from '@/components/ui/Badge';
+import Link from 'next/link';
 import { isAuthenticated, getStoredUser } from '@/lib/auth';
 import { formatDate, formatCurrency } from '@/lib/utils';
 
@@ -71,11 +72,12 @@ export default function AdminAppointmentsPage() {
                 <th className="pb-3">Date</th>
                 <th className="pb-3">Fee</th>
                 <th className="pb-3">Status</th>
+                <th className="pb-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {data.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-10 text-gray-500">No appointments found.</td></tr>
+                <tr><td colSpan={7} className="text-center py-10 text-gray-500">No appointments found.</td></tr>
               ) : data.map((a) => (
                 <tr key={a.id} className="border-b last:border-0 hover:bg-gray-50">
                   <td className="py-3 font-mono">{a.tokenNumber || `${a.serialNumber || '---'}`}</td>
@@ -84,6 +86,9 @@ export default function AdminAppointmentsPage() {
                   <td className="py-3">{a.appointmentDate ? formatDate(a.appointmentDate) : 'N/A'}</td>
                   <td className="py-3">{a.consultationFee ? formatCurrency(a.consultationFee) : '---'}</td>
                   <td className="py-3"><Badge status={a.status} /></td>
+                  <td className="py-3">
+                    <Link href={`/admin/appointments/${a.id}/edit`} className="text-primary-600 hover:underline text-sm">Edit</Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

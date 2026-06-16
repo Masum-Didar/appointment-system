@@ -17,15 +17,29 @@ export default function AdminAssistantsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', email: '', password: 'Assistant@123' });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', password: 'Assistant@123', chamberId: '' });
   const [saving, setSaving] = useState(false);
+  const [chambers, setChambers] = useState([]);
 
   useEffect(() => {
     if (!isAuthenticated()) { router.push('/auth/login'); return; }
     const user = getStoredUser();
     if (user?.role !== 'admin') { router.push('/dashboard'); return; }
     fetchAssistants();
+    fetchChambers();
   }, []);
+
+  const fetchChambers = async () => {
+    try {
+      const res = await authFetch('/api/v1/admin/chambers?limit=200');
+      if (res.ok) {
+        const d = await res.json();
+        setChambers(d.data || []);
+      }
+    } catch (e) {
+      // silent
+    }
+  };
 
   const fetchAssistants = async () => {
     try {
@@ -52,7 +66,7 @@ export default function AdminAssistantsPage() {
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.message || 'Failed to create assistant');
-      setForm({ name: '', phone: '', email: '', password: 'Assistant@123' });
+      setForm({ name: '', phone: '', email: '', password: 'Assistant@123', chamberId: '' });
       setShowForm(false);
       fetchAssistants();
     } catch (e) {
@@ -82,6 +96,21 @@ export default function AdminAssistantsPage() {
               <Input label="Phone *" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} required />
               <Input label="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
               <Input label="Password" type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Assign Chamber</label>
+                <select
+                  value={form.chamberId}
+                  onChange={e => setForm(f => ({ ...f, chamberId: e.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">-- No Chamber --</option>
+                  {chambers.map(c => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}{c.doctor ? ` (Dr. ${c.doctor.name})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <Button type="submit" disabled={saving}>{saving ? 'Creating...' : 'Create Assistant'}</Button>
           </form>
