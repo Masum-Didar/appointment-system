@@ -200,6 +200,15 @@ class ApiClient {
     return this.get(`/payments/${id}`);
   }
 
+  // Auth - Password Reset
+  forgotPassword(phone) {
+    return this.post('/auth/forgot-password', { phone });
+  }
+
+  resetPassword(phone, password) {
+    return this.post('/auth/reset-password', { phone, password, confirmPassword: password });
+  }
+
   // Notifications
   getNotifications(params) {
     return this.get('/notifications', params);

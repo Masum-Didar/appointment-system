@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import { registerUser } from '@/lib/auth';
+import { registerUser, getDashboardUrl } from '@/lib/auth';
 
 export default function RegisterForm() {
   const [form, setForm] = useState({
@@ -24,8 +24,13 @@ export default function RegisterForm() {
     setLoading(true);
 
     try {
-      await registerUser(form);
-      router.push(`/auth/verify-otp?phone=${encodeURIComponent(form.phone)}`);
+      const result = await registerUser(form);
+      if (result.data?.accessToken) {
+        localStorage.setItem('accessToken', result.data.accessToken);
+        localStorage.setItem('refreshToken', result.data.refreshToken);
+        localStorage.setItem('user', JSON.stringify(result.data.user));
+      }
+      router.push(getDashboardUrl(result.data?.user?.role || form.role));
     } catch (err) {
       setError(err.message || 'Registration failed');
     } finally {
