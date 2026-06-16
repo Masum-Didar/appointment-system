@@ -19,7 +19,7 @@ export default function DoctorsPage() {
 
   const fetchDoctors = async () => {
     try {
-      const res = await fetch('/api/v1/doctors/public');
+      const res = await fetch('/api/v1/doctors');
       const data = await res.json();
       setDoctors(data.data?.doctors || data.data || []);
     } catch {

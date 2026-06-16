@@ -8,7 +8,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const user = getStoredUser();
 
-  if (!user || pathname.startsWith('/auth')) return null;
+  if (!user || pathname === '/' || pathname.startsWith('/auth')) return null;
 
   const menuItems = {
     patient: [

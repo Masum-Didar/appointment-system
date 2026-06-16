@@ -1,53 +1,69 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Card from '@/components/ui/Card';
+import Input from '@/components/ui/Input';
+import DoctorCard from '@/components/doctor/DoctorCard';
+import Spinner from '@/components/ui/Spinner';
 
 export default function HomePage() {
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetch('/api/v1/doctors')
+      .then((res) => res.json())
+      .then((data) => setDoctors(data.data || []))
+      .catch(() => setDoctors([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = doctors.filter((d) =>
+    d.name?.toLowerCase().includes(search.toLowerCase()) ||
+    d.speciality?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="space-y-8">
-      <div className="text-center py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Welcome to HealthQueue
+    <div className="space-y-10">
+      <section className="text-center py-12 bg-gradient-to-br from-primary-50 to-white -mx-6 -mt-6 px-6 rounded-b-3xl">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          Find the Right Doctor for You
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Bangladesh&apos;s premier healthcare appointment and queue management system.
-          Book appointments, track live queues, and manage your healthcare journey.
+        <p className="text-lg text-gray-600 max-w-xl mx-auto mb-8">
+          Search, book appointments, and track live queues — all in one place.
         </p>
+        <div className="max-w-md mx-auto">
+          <Input
+            placeholder="Search by doctor name or speciality..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </section>
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-900">
+          {search ? `Search Results (${filtered.length})` : 'All Doctors'}
+        </h2>
+        <Link href="/doctors" className="text-sm text-primary-600 hover:underline">
+          View All &rarr;
+        </Link>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <Card className="text-center p-8">
-          <div className="text-4xl mb-4">🔍</div>
-          <h3 className="text-lg font-semibold mb-2">Find Doctors</h3>
-          <p className="text-gray-500 text-sm mb-4">
-            Search by speciality, location, or name. Read reviews and check availability.
-          </p>
-          <Link href="/doctors" className="text-primary-600 hover:underline font-medium">
-            Search Doctors &rarr;
-          </Link>
-        </Card>
-
-        <Card className="text-center p-8">
-          <div className="text-4xl mb-4">📅</div>
-          <h3 className="text-lg font-semibold mb-2">Book Appointments</h3>
-          <p className="text-gray-500 text-sm mb-4">
-            Schedule appointments with verified doctors at your preferred chamber.
-          </p>
-          <Link href="/auth/login" className="text-primary-600 hover:underline font-medium">
-            Book Now &rarr;
-          </Link>
-        </Card>
-
-        <Card className="text-center p-8">
-          <div className="text-4xl mb-4">👥</div>
-          <h3 className="text-lg font-semibold mb-2">Live Queue</h3>
-          <p className="text-gray-500 text-sm mb-4">
-            Track real-time queue status, estimated wait time, and your position.
-          </p>
-          <Link href="/auth/login" className="text-primary-600 hover:underline font-medium">
-            View Queue &rarr;
-          </Link>
-        </Card>
-      </div>
+      {loading ? (
+        <Spinner className="py-20" />
+      ) : filtered.length === 0 ? (
+        <p className="text-center text-gray-500 py-10">
+          {search ? 'No doctors match your search.' : 'No doctors available at the moment.'}
+        </p>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.slice(0, 6).map((d) => (
+            <DoctorCard key={d.id} doctor={d} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
