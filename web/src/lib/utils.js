@@ -45,11 +45,17 @@ export function getStatusColor(status) {
     cancelled: 'badge-danger',
     missed: 'badge-danger',
     active: 'badge-success',
+    inactive: 'badge-danger',
     paused: 'badge-warning',
     paid: 'badge-success',
     unpaid: 'badge-warning',
     failed: 'badge-danger',
     refunded: 'badge-info',
+    verified: 'badge-success',
+    patient: 'badge-info',
+    doctor: 'badge-success',
+    assistant: 'badge-warning',
+    admin: 'badge-danger',
   };
   return colors[status] || 'badge-info';
 }
@@ -64,11 +70,13 @@ export function getStatusLabel(status) {
     cancelled: 'Cancelled',
     missed: 'Missed',
     active: 'Active',
+    inactive: 'Inactive',
     paused: 'Paused',
     paid: 'Paid',
     unpaid: 'Unpaid',
     failed: 'Failed',
     refunded: 'Refunded',
+    verified: 'Verified',
   };
   return labels[status] || status;
 }

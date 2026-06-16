@@ -28,7 +28,10 @@ export default function Sidebar() {
     ],
     admin: [
       { label: 'Dashboard', href: '/dashboard/admin', icon: '📊' },
-      { label: 'Users', href: '/dashboard/admin?tab=users', icon: '👤' },
+      { label: 'Users', href: '/admin/users', icon: '👤' },
+      { label: 'Doctors', href: '/admin/doctors', icon: '🩺' },
+      { label: 'Assistants', href: '/admin/assistants', icon: '👥' },
+      { label: 'Chambers', href: '/admin/chambers', icon: '🏥' },
       { label: 'Appointments', href: '/dashboard/admin?tab=appointments', icon: '📅' },
       { label: 'Analytics', href: '/dashboard/admin?tab=analytics', icon: '📈' },
     ],

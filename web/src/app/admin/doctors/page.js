@@ -2,49 +2,60 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Card from '@/components/ui/Card';
+import Link from 'next/link';
 import Spinner from '@/components/ui/Spinner';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
-import { isAuthenticated } from '@/lib/auth';
+import { isAuthenticated, getStoredUser } from '@/lib/auth';
+import authFetch from '@/lib/authFetch';
 
 export default function AdminDoctorsPage() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
     if (!isAuthenticated()) { router.push('/auth/login'); return; }
+    const user = getStoredUser();
+    if (user?.role !== 'admin') { router.push('/dashboard'); return; }
     fetchDoctors();
   }, []);
 
   const fetchDoctors = async () => {
     try {
-      const res = await fetch('/api/v1/admin/doctors?limit=100');
+      const res = await authFetch('/api/v1/admin/doctors?limit=100');
+      if (!res.ok) throw new Error(res.statusText);
       const data = await res.json();
-      setDoctors(data.data?.doctors || data.data || []);
-    } catch {
+      setDoctors(data.data || []);
+    } catch (e) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const verifyDoctor = async (id, verified) => {
+  const verifyDoctor = async (id, isVerified) => {
     try {
-      await fetch(`/api/v1/admin/doctors/${id}/verify`, {
-        method: 'POST',
+      const res = await authFetch(`/api/v1/admin/doctors/${id}/verify`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ verified }),
+        body: JSON.stringify({ isVerified }),
       });
-      fetchDoctors();
+      if (res.ok) fetchDoctors();
     } catch {}
   };
 
   if (loading) return <Spinner className="py-20" />;
+  if (error) return <p className="text-center py-20 text-red-500">Error: {error}</p>;
+  if (doctors.length === 0) return <p className="text-center py-20 text-gray-500">No doctors found.</p>;
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Doctor Management</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Doctor Management</h1>
+        <Link href="/admin/doctors/new"><Button>+ Add Doctor</Button></Link>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -60,9 +71,9 @@ export default function AdminDoctorsPage() {
           <tbody>
             {doctors.map((d) => (
               <tr key={d.id} className="border-b last:border-0">
-                <td className="py-3 font-medium">{d.name}</td>
+                <td className="py-3 font-medium"><Link href={`/admin/doctors/${d.id}`} className="text-primary-600 hover:underline">{d.name}</Link></td>
                 <td className="py-3">{d.speciality}</td>
-                <td className="py-3 text-xs">{d.bmdcNumber}</td>
+                <td className="py-3 text-xs">{d.bmdcRegistrationNumber}</td>
                 <td className="py-3">
                   <Badge status={d.isVerified ? 'verified' : 'pending'} />
                 </td>
