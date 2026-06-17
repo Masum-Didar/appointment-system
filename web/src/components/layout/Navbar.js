@@ -3,7 +3,35 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { getStoredUser, logoutUser, getDashboardUrl } from '@/lib/auth';
+import { getStoredUser, logoutUser } from '@/lib/auth';
+
+function UserAvatar({ user }) {
+  const name = user.profile?.name || '';
+  const avatarUrl = user.profile?.avatarUrl;
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        className="w-8 h-8 rounded-full object-cover"
+      />
+    );
+  }
+
+  return (
+    <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-semibold">
+      {initials || '?'}
+    </div>
+  );
+}
 
 const navLinks = [
   { label: 'Find Doctors', href: '/doctors' },
@@ -52,8 +80,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Link href={getDashboardUrl(user.role)} className="btn-primary text-sm">
-                  Dashboard
+                <Link href="/profile" className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900">
+                  <UserAvatar user={user} />
+                  <span className="font-medium">{user.profile?.name || 'User'}</span>
                 </Link>
                 <button onClick={handleLogout} className="btn-secondary text-sm py-1.5">
                   Logout
@@ -100,7 +129,10 @@ export default function Navbar() {
             <hr className="my-2" />
             {user ? (
               <>
-                <Link href={getDashboardUrl(user.role)} className="block px-3 py-2 text-sm text-primary-600" onClick={() => setIsOpen(false)}>Dashboard</Link>
+                <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700" onClick={() => setIsOpen(false)}>
+                  <UserAvatar user={user} />
+                  <span className="font-medium">{user.profile?.name || 'User'}</span>
+                </Link>
                 <button onClick={handleLogout} className="block px-3 py-2 text-sm text-red-600 w-full text-left">Logout</button>
               </>
             ) : (
