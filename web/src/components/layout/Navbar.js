@@ -80,7 +80,15 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Link href="/profile" className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900">
+                <Link
+                  href={
+                    user.role === 'doctor' ? `/doctors/${user.profile?.id}` :
+                    user.role === 'assistant' ? `/admin/assistants/${user.profile?.id}` :
+                    user.role === 'admin' ? `/admin/${user.profile?.id}` :
+                    '/profile'
+                  }
+                  className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900"
+                >
                   <UserAvatar user={user} />
                   <span className="font-medium">{user.profile?.name || 'User'}</span>
                 </Link>
@@ -129,7 +137,16 @@ export default function Navbar() {
             <hr className="my-2" />
             {user ? (
               <>
-                <Link href="/profile" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700" onClick={() => setIsOpen(false)}>
+                <Link
+                  href={
+                    user.role === 'doctor' ? `/doctors/${user.profile?.id}` :
+                    user.role === 'assistant' ? `/admin/assistants/${user.profile?.id}` :
+                    user.role === 'admin' ? `/admin/${user.profile?.id}` :
+                    '/profile'
+                  }
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700"
+                  onClick={() => setIsOpen(false)}
+                >
                   <UserAvatar user={user} />
                   <span className="font-medium">{user.profile?.name || 'User'}</span>
                 </Link>

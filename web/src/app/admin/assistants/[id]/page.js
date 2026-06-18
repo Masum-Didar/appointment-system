@@ -16,11 +16,12 @@ export default function AdminAssistantProfilePage() {
   const [assistant, setAssistant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const currentUser = getStoredUser();
+  const isOwner = currentUser?.id === params.id;
+  const isAdmin = currentUser?.role === 'admin';
 
   useEffect(() => {
     if (!isAuthenticated()) { router.push('/auth/login'); return; }
-    const user = getStoredUser();
-    if (user?.role !== 'admin') { router.push('/dashboard'); return; }
     fetchAssistant();
   }, []);
 
@@ -44,9 +45,11 @@ export default function AdminAssistantProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/admin/users" className="text-primary-600 hover:underline text-sm">&larr; Back to Users</Link>
-      </div>
+      {isAdmin && (
+        <div className="flex items-center gap-3">
+          <Link href="/admin/users" className="text-primary-600 hover:underline text-sm">&larr; Back to Users</Link>
+        </div>
+      )}
 
       <Card className="p-6">
         <div className="flex items-start justify-between">
@@ -56,9 +59,11 @@ export default function AdminAssistantProfilePage() {
           </div>
           <div className="flex items-center gap-2">
             <Badge status={assistant.isActive ? 'active' : 'inactive'} />
-            <Link href={`/admin/assistants/${params.id}/edit`} className="btn-secondary text-sm px-3 py-1.5 rounded-lg">
-              Edit
-            </Link>
+            {(isOwner || isAdmin) && (
+              <Link href={`/admin/assistants/${params.id}/edit`} className="btn-secondary text-sm px-3 py-1.5 rounded-lg">
+                Edit
+              </Link>
+            )}
           </div>
         </div>
 
