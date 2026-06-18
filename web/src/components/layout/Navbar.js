@@ -83,7 +83,7 @@ export default function Navbar() {
                 <Link
                   href={
                     user.role === 'doctor' ? `/doctors/${user.profile?.id}` :
-                    user.role === 'assistant' ? `/admin/assistants/${user.profile?.id}` :
+                    user.role === 'assistant' ? `/assistants/${user.id}` :
                     user.role === 'admin' ? `/admin/${user.profile?.id}` :
                     '/profile'
                   }
@@ -139,9 +139,9 @@ export default function Navbar() {
               <>
                 <Link
                   href={
-                    user.role === 'doctor' ? `/doctors/${user.profile?.id}` :
-                    user.role === 'assistant' ? `/admin/assistants/${user.profile?.id}` :
-                    user.role === 'admin' ? `/admin/${user.profile?.id}` :
+                    user.role === 'doctor' ? `/dashboard/doctor/profile` :
+                    user.role === 'assistant' ? `/assistants/profile` :
+                    user.role === 'admin' ? `/dashboard/admin` :
                     '/profile'
                   }
                   className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700"

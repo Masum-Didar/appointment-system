@@ -19,7 +19,6 @@ export default function EditAssistantPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [assistantId, setAssistantId] = useState(null);
-
   useEffect(() => {
     if (!isAuthenticated()) { router.push('/auth/login'); return; }
     const user = getStoredUser();

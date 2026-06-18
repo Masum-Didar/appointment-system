@@ -18,11 +18,13 @@ export default function Sidebar() {
     ],
     doctor: [
       { label: 'Dashboard', href: '/dashboard/doctor', icon: '📊' },
+      { label: 'My Profile', href: '/dashboard/doctor/profile', icon: '👤' },
       { label: 'Today\'s Queue', href: '/queue', icon: '👥' },
       { label: 'Appointments', href: '/appointments', icon: '📅' },
     ],
     assistant: [
       { label: 'Dashboard', href: '/dashboard/assistant', icon: '📊' },
+      { label: 'My Profile', href: '/assistants/profile', icon: '👤' },
       { label: 'Manage Queue', href: '/queue', icon: '👥' },
       { label: 'Appointments', href: '/appointments', icon: '📅' },
     ],
